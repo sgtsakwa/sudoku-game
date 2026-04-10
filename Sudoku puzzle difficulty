@@ -1,0 +1,20 @@
+ def generate_puzzle(self, difficulty):
+        remove_map = {
+            "easy": 30,
+            "medium": 40,
+            "hard": 50,
+            "extreme": 61,
+        }
+
+        remove = remove_map.get(difficulty, 40)
+
+        solution = self.generate_full_grid()
+        puzzle = copy.deepcopy(solution)
+
+        positions = [(r, c) for r in range(9) for c in range(9)]
+        random.shuffle(positions)
+
+        for r, c in positions[:remove]:
+            puzzle[r][c] = 0
+
+        return puzzle, solution
