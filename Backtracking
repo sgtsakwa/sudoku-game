@@ -1,0 +1,51 @@
+class SudokuGenerator:
+    def is_valid(self, grid, row, col, num):
+        # Check if the number already exists in the current row
+        if num in grid[row]:
+            return False
+
+        # Check if the number already exists in the current column
+        if num in [grid[i][col] for i in range(9)]:
+            return False
+
+        # Find the starting row and column of the 3x3 subgrid
+        br, bc = 3 * (row // 3), 3 * (col // 3)
+
+        # Check if the number already exists in the 3x3 subgrid
+        for i in range(br, br + 3):
+            for j in range(bc, bc + 3):
+                if grid[i][j] == num:
+                    return False
+
+        # If the number does not break any Sudoku rules, it is valid
+        return True
+
+    def solve(self, grid):
+        # Loop through every cell in the grid
+        for r in range(9):
+            for c in range(9):
+                # Find an empty cell represented by 0
+                if grid[r][c] == 0:
+                    # Create a list of numbers 1 to 9 and shuffle them
+                    # to produce a different valid board each time
+                    nums = list(range(1, 10))
+                    random.shuffle(nums)
+
+                    # Try each possible number in the empty cell
+                    for n in nums:
+                        # Check if placing the number is valid
+                        if self.is_valid(grid, r, c, n):
+                            grid[r][c] = n  # Place the number
+
+                            # Recursively continue solving the rest of the grid
+                            if self.solve(grid):
+                                return True
+
+                            # If the choice leads to a dead end, reset the cell
+                            grid[r][c] = 0
+
+                    # If no number works in this cell, backtrack
+                    return False
+
+        # If no empty cells remain, the grid has been solved
+        return True
